@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns/399937583301166342/models/m-48d72dcf1a7b45e198d5689445a25b57/artifacts
+creation_timestamp: 1750045081868
+experiment_id: '399937583301166342'
+last_updated_timestamp: 1750045092182
+model_id: m-48d72dcf1a7b45e198d5689445a25b57
+model_type: null
+name: model
+source_run_id: 0150422f47224244b152b61cc886893d
+status: 2
+status_message: null

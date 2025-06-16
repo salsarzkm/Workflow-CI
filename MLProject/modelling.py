@@ -1,4 +1,5 @@
 import mlflow
+import argparse
 import mlflow.sklearn
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -6,14 +7,18 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 # Set tracking URI 
-mlflow.set_tracking_uri("http://localhost:5000")
+# mlflow.set_tracking_uri("http://localhost:5000")
 
 # Aktifkan autolog untuk tracking otomatis
 mlflow.sklearn.autolog()
 
-# Load dataset hasil preprocessing
-df = pd.read_csv('C:/Users\Windows 10/Studpen_Msml/Membangun_model/predpersonal_preprocessing.csv')
+# Argparse agar MLflow bisa pass --data_path
+parser = argparse.ArgumentParser()
+parser.add_argument('--data_path', type=str, default='predpersonal_preprocessing.csv')
+args = parser.parse_args()
 
+# Load dataset dari parameter
+df = pd.read_csv(args.data_path)
 # Memisahkan target dan fitur
 X = df.drop(columns='Personality')  # kolom fitur
 y = df['Personality']               # kolom target
@@ -22,6 +27,12 @@ y = df['Personality']               # kolom target
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
+
+# Set tracking ke direktori lokal di proyek ini
+mlflow.set_tracking_uri("file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns")
+
+# Gunakan experiment bernama 'modelling-experiment' (otomatis dibuat kalau belum ada)
+mlflow.set_experiment("modelling-experiment")
 
 # MLflow experiment
 with mlflow.start_run() as run:
