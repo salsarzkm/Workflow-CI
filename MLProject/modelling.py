@@ -37,7 +37,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 mlflow.set_experiment("modelling-experiment")
 
 # MLflow experiment
-with mlflow.start_run() as run:
+if mlflow.active_run() is None:
+    run = mlflow.start_run()
+else:
+    run = mlflow.active_run()
     # Model dasar (tanpa tuning)
     model = RandomForestClassifier(random_state=42)
     model.fit(X_train, y_train)
