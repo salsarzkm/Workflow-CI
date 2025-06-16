@@ -26,7 +26,7 @@ jobs:
           mlflow run MLProject
 
       - name: Upload classification report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: classification_report
           path: MLProject/classification_report.txt
