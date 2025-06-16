@@ -10,9 +10,6 @@ from sklearn.metrics import accuracy_score, classification_report
 # mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_tracking_uri("file:./mlruns")  # tanpa direktori Windows
 
-# Aktifkan autolog untuk tracking otomatis
-mlflow.sklearn.autolog()
-
 # Argparse agar MLflow bisa pass --data_path
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, default='predpersonal_preprocessing.csv')
@@ -33,30 +30,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Set tracking ke direktori lokal di proyek ini
 # mlflow.set_tracking_uri("file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns")
 
-# Gunakan experiment bernama 'modelling-experiment' (otomatis dibuat kalau belum ada)
+# Experiment bernama 'modelling-experiment' (otomatis dibuat kalau belum ada)
 mlflow.set_experiment("modelling-experiment")
 
-# MLflow experiment
-if mlflow.active_run() is None:
-    run = mlflow.start_run()
-else:
-    run = mlflow.active_run()
-    # Model dasar (tanpa tuning)
-    model = RandomForestClassifier(random_state=42)
-    model.fit(X_train, y_train)
+# Start run & log
+run = mlflow.start_run() if mlflow.active_run() is None else mlflow.active_run()
 
-    # Prediksi dan evaluasi
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    report = classification_report(y_test, y_pred)
-    
-    print("Akurasi:", acc)
-    print("Laporan klasifikasi:\n", report)
-
-    # Simpan classification report
-    with open("classification_report.txt", "w") as f:
-        f.write(report)
-    mlflow.log_artifact("classification_report.txt")
-
-    # Tambahkan ini:
-    print("Run ID:", run.info.run_id)
+# Autolog *setelah* start_run
+mlflow.sklearn.autolog()
