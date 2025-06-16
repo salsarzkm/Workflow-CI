@@ -19,6 +19,7 @@ args = parser.parse_args()
 
 # Load dataset dari parameter
 df = pd.read_csv(args.data_path)
+
 # Memisahkan target dan fitur
 X = df.drop(columns='Personality')  # kolom fitur
 y = df['Personality']               # kolom target
@@ -29,7 +30,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Set tracking ke direktori lokal di proyek ini
-mlflow.set_tracking_uri("file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns")
+# mlflow.set_tracking_uri("file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns")
 
 # Gunakan experiment bernama 'modelling-experiment' (otomatis dibuat kalau belum ada)
 mlflow.set_experiment("modelling-experiment")
