@@ -27,25 +27,27 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Set experiment
 mlflow.set_experiment("modelling-experiment")
 
-# 💡 Langsung autolog saja, TANPA start_run()
+# Autolog otomatis
 mlflow.sklearn.autolog()
 
-# Train model (mlflow run akan otomatis mencatat ke active run-nya)
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+# Menjalankan training & logging di dalam start_run
+with mlflow.start_run():
+    # Train model
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_train, y_train)
 
-# Simpan model sebagai artifact agar bisa di-serve
-mlflow.sklearn.log_model(model, "model")
+    # Simpan model secara eksplisit (walaupun autolog sudah simpan juga)
+    mlflow.sklearn.log_model(model, "model")
 
-# Predict & evaluate
-y_pred = model.predict(X_test)
-acc = accuracy_score(y_test, y_pred)
-report = classification_report(y_test, y_pred)
+    # Predict & evaluate
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
 
-print("Akurasi:", acc)
-print("Laporan klasifikasi:\n", report)
+    print("Akurasi:", acc)
+    print("Laporan klasifikasi:\n", report)
 
-# Simpan classification report
-with open("classification_report.txt", "w") as f:
-    f.write(report)
-mlflow.log_artifact("classification_report.txt")
+    # Simpan classification report
+    with open("classification_report.txt", "w") as f:
+        f.write(report)
+    mlflow.log_artifact("classification_report.txt")
