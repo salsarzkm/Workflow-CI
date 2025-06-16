@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 # Set tracking URI 
 # mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri("file:./mlruns")  # tanpa direktori Windows
 
 # Aktifkan autolog untuk tracking otomatis
 mlflow.sklearn.autolog()
