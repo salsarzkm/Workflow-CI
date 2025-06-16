@@ -20,7 +20,13 @@ jobs:
           auto-activate-base: false
 
       - name: Install MLflow and Run Project
-        shell: bash -l {0}  # ⬅️ ini penting untuk pakai shell Conda
+        shell: bash -l {0}
         run: |
           pip install mlflow
           mlflow run MLProject
+
+      - name: Upload classification report
+        uses: actions/upload-artifact@v3
+        with:
+          name: classification_report
+          path: MLProject/classification_report.txt
