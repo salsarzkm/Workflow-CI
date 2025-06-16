@@ -6,35 +6,43 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-# Set tracking URI 
-# mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_tracking_uri("file:./mlruns")  # tanpa direktori Windows
+# Set tracking URI
+mlflow.set_tracking_uri("file:./mlruns")
 
-# Argparse agar MLflow bisa pass --data_path
+# Argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, default='predpersonal_preprocessing.csv')
 args = parser.parse_args()
 
-# Load dataset dari parameter
+# Load data
 df = pd.read_csv(args.data_path)
+X = df.drop(columns='Personality')
+y = df['Personality']
 
-# Memisahkan target dan fitur
-X = df.drop(columns='Personality')  # kolom fitur
-y = df['Personality']               # kolom target
-
-# Bagi data ke training dan testing
+# Split
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Set tracking ke direktori lokal di proyek ini
-# mlflow.set_tracking_uri("file:///C:/Users/Windows 10/Studpen_Msml/Workflow-CI/MLProject/mlruns")
-
-# Experiment bernama 'modelling-experiment' (otomatis dibuat kalau belum ada)
+# Set experiment
 mlflow.set_experiment("modelling-experiment")
 
-# Start run & log
-run = mlflow.start_run() if mlflow.active_run() is None else mlflow.active_run()
-
-# Autolog *setelah* start_run
+# 💡 Langsung autolog saja, TANPA start_run()
 mlflow.sklearn.autolog()
+
+# Train model (mlflow run akan otomatis mencatat ke active run-nya)
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Predict & evaluate
+y_pred = model.predict(X_test)
+acc = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+print("Akurasi:", acc)
+print("Laporan klasifikasi:\n", report)
+
+# Simpan classification report
+with open("classification_report.txt", "w") as f:
+    f.write(report)
+mlflow.log_artifact("classification_report.txt")
