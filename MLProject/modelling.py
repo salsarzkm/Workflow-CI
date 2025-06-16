@@ -34,6 +34,9 @@ mlflow.sklearn.autolog()
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 
+# Simpan model sebagai artifact agar bisa di-serve
+mlflow.sklearn.log_model(model, "model")
+
 # Predict & evaluate
 y_pred = model.predict(X_test)
 acc = accuracy_score(y_test, y_pred)
