@@ -6,9 +6,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-# Set tracking URI
-mlflow.set_tracking_uri("file:./mlruns")
-
 # Argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, default='predpersonal_preprocessing.csv')
@@ -25,24 +22,27 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Set experiment
+mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("modelling-experiment")
 
-# Autolog otomatis
-mlflow.sklearn.autolog()
+# Start run
+with mlflow.start_run():
+    # Train
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_train, y_train)
 
-# Train model 
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
 
-# Evaluate
-y_pred = model.predict(X_test)
-acc = accuracy_score(y_test, y_pred)
-report = classification_report(y_test, y_pred)
+    # Evaluate
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
 
-print("Akurasi:", acc)
-print("Laporan klasifikasi:\n", report)
+    print("Akurasi:", acc)
+    print("Laporan klasifikasi:\n", report)
 
-# Simpan classification report
-with open("classification_report.txt", "w") as f:
-    f.write(report)
-mlflow.log_artifact("classification_report.txt")
+    # Log classification report
+    with open("classification_report.txt", "w") as f:
+        f.write(report)
+    mlflow.log_artifact("classification_report.txt")
