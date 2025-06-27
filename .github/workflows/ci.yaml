@@ -19,11 +19,12 @@ jobs:
           environment-file: MLProject/conda.yaml
           auto-activate-base: false
 
-      - name: Install MLflow and Run Project
+      - name: Install MLflow and Run Script Directly
         shell: bash -l {0}
         run: |
           pip install mlflow
-          mlflow run MLProject/
+          cd MLProject
+          python modelling.py --data_path predpersonal_preprocessing.csv
 
       - name: Upload classification report
         uses: actions/upload-artifact@v4
