@@ -12,7 +12,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v3
 
-      - name: Install Conda & Run MLflow Project
+      - name: Install Conda & Setup Environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: personality-env
@@ -23,7 +23,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install mlflow
-          mlflow run MLProject
+          mlflow run MLProject/
 
       - name: Upload classification report
         uses: actions/upload-artifact@v4
