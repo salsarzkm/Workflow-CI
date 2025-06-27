@@ -25,6 +25,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("modelling-experiment")
 
+mlflow.end_run()
+
 # Start run
 with mlflow.start_run():
     # Train
